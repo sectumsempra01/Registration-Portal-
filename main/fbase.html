@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD</title>
+    <link rel="stylesheet" type="text/css" href="xboy.css">
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+</head>
+<body style="  background-color: #323539;">
+    <div class="float-container">
+        <div class="typewriter">
+            <div class="typewriter-text">Karma Registration Portal</div>
+        </div>        
+    <div class="float-child" >
+   <div> Name <input id ="name" type = "text" class="form-control"></input></div><br>
+   <div> Roll No <input id ="rollno" type = "text" class="form-control"></input></div><br>
+   </div>
+   <div class="float-child">
+   <div> Branch <select id="branchname" class="form-select" aria-label="Default select example">
+  <option selected>Select Branch</option>
+  <option value="CSE">CSE</option>
+  <option value="CSCE">CSCE</option>
+  <option value="CSSE">CSSE</option>
+</select></div><br>
+   <div> CGPA <input id ="cgpa" type = "text" class="form-control"></input></div><br>
+    </div>
+    <br>
+    <br>
+    </div><div class="center">
+   <button id = "insert" class="btn btn-outline-primary">INSERT</button>
+   <button id = "select" class="btn btn-dark">SELECT</button>
+   <button id = "delete" class="btn btn-outline-danger">DELETE</button>
+   <button id = "edit"  class="btn btn-success">EDIT</button>
+   <button id = "download-button"  class="btn btn-warning">csv<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+  </svg></button>
+   </div>
+   <div class="table-div">
+       <div class="vertical-center">
+    <table class="table table-hover table-dark table-striped" id="tb">
+        <thead>
+            
+            <th>S no.</th>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Branch</th>
+        <th>CGPA</th>
+    </thead>
+    <div class="bd">
+    <tbody id="tablebody">
+
+    </tbody>
+    </div>
+    </table>
+</div>
+</div>
+   <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+
+   
+   <script id = "MainJs">
+    
+        var firebaseConfig = {
+    apiKey: "AIzaSyAUCQJUtrmnyTcy1iGDjlrRyQkwlLU6vFs",
+    authDomain: "crud-app-ae3e5.firebaseapp.com",
+    projectId: "crud-app-ae3e5",
+    storageBucket: "crud-app-ae3e5.appspot.com",
+    messagingSenderId: "566145969593",
+    appId: "1:566145969593:web:25b34edd3d743135cb1a68"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  var rollx,namex,branchx,cgpax;
+
+  function Ready(){
+    rollx = document.getElementById('rollno').value;
+    namex = document.getElementById('name').value;
+    branchx = document.getElementById('branchname').value;
+    cgpax = document.getElementById('cgpa').value;
+  }
+
+  function SelectAllData(){
+      firebase.database().ref('student').once('value',
+      function(AllRecords){
+        AllRecords.forEach(
+                function(CurrRec){
+                    var name = CurrRec.val().Students_Name;
+                    var roll = CurrRec.val().Roll_Number;
+                    var branch = CurrRec.val().Branch_name;
+                    var cgpa = CurrRec.val().CGPA;
+                    AddItemInTable(name,roll,branch,cgpa);
+                });
+
+
+      });
+  }
+  window.onload = SelectAllData;
+  var rownum = 0;
+  function AddItemInTable(name,roll,branch,cgpa){
+    /*var chk = document.createElement('input');
+    chk.setAttribute('type', 'checkbox');
+    chk.setAttribute('value', 'yes');
+    chk.setAttribute('id',rownum);*/
+      var tbody = document.getElementById('tablebody');
+      var trow = document.createElement('tr');
+      var td1 = document.createElement('td');
+      var td2 = document.createElement('td');
+      var td3 = document.createElement('td');
+      var td4 = document.createElement('td');
+      var td5 = document.createElement('td');
+      td1.innerHTML = ++rownum;
+      td2.innerHTML = roll;
+      td3.innerHTML = name;
+      td4.innerHTML = branch;
+      td5.innerHTML = cgpa;
+       // trow.appendChild(chk);
+        trow.appendChild(td1);
+        trow.appendChild(td2);
+        trow.appendChild(td3);
+        trow.appendChild(td4);
+        trow.appendChild(td5);
+        tbody.appendChild(trow);
+  
+    }
+
+    document.getElementById('insert').onclick = function(){
+        Ready();
+        console.log(namex);
+        console.log(rollx);
+        firebase.database().ref('student/'+rollx).set({
+            Students_Name: namex,
+            Roll_Number:rollx,
+            Branch_name:branchx,
+            CGPA: cgpax,
+        });
+        location.reload();
+    }
+    document.getElementById('select').onclick = function(){
+        Ready();
+        firebase.database().ref('student/'+rollx).on('value',function(snapshot){
+            document.getElementById('name').value = snapshot.val().Students_Name;
+            document.getElementById('branchname').value = snapshot.val().Branch_name;
+            document.getElementById('cgpa').value = snapshot.val().CGPA;
+        });
+
+
+    }
+
+    document.getElementById('edit').onclick = function(){
+        Ready();
+        console.log(namex);
+        console.log(rollx);
+        firebase.database().ref('student/'+rollx).update({
+            Students_Name: namex,
+            Branch_name:branchx,
+            CGPA: cgpax,
+        });
+        location.reload();
+    }
+    
+    document.getElementById('delete').onclick = function(){
+        Ready();
+        console.log(namex);
+        console.log(rollx);
+        firebase.database().ref('student/'+rollx).remove();
+        location.reload();
+    }
+    
+
+
+
+    document.getElementById("download-button").addEventListener("click", function () {
+	var html = document.querySelector("table").outerHTML;
+	htmlToCSV(html, "students.csv");
+});
+
+function htmlToCSV(html, filename) {
+	var data = [];
+	var rows = document.querySelectorAll("table tr");
+			
+	for (var i = 0; i < rows.length; i++) {
+		var row = [], cols = rows[i].querySelectorAll("td, th");
+				
+		for (var j = 0; j < cols.length; j++) {
+		        row.push(cols[j].innerText);
+                 }
+		        
+		data.push(row.join(",")); 		
+	}
+
+	downloadCSVFile(data.join("\n"), filename);
+}
+function downloadCSVFile(csv, filename) {
+	var csv_file, download_link;
+
+	csv_file = new Blob([csv], {type: "text/csv"});
+
+	download_link = document.createElement("a");
+
+	download_link.download = filename;
+
+	download_link.href = window.URL.createObjectURL(csv_file);
+
+	download_link.style.display = "none";
+
+	document.body.appendChild(download_link);
+
+	download_link.click();
+}
+
+   </script>
+
+
+</body>
+</html>
