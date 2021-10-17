@@ -64,4 +64,6 @@ git push
 
 **11.** Voila :exclamation: You have made a PR to the Registration-Portal- :boom: . Wait for your submission to be accepted and your PR to be merged.
 
-#### contributed by Arnav Sharma 
+####  contributed by Arnav Sharma 
+####  contributed by Neelanjan Ghosh    
+####  contributed by Debjyoti Mukherjee
